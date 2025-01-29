@@ -29,5 +29,6 @@ JWT_SECRET=your_jwt_secret
 PORT=3001  
 
 Run Migrations & Start Server
+
 npm run migrate
 npm run dev
