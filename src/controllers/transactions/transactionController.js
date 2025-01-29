@@ -2,7 +2,7 @@ import db from '../../../db/knex.js';
 
 const getTransactionHistory = async (req, res) => {
   try {
-    const { user_id } = req.user;  
+    const  user_id  = req.body.user_id; 
 
     // Retrieve the user's transactions 
     const transactions = await db('transactions')
