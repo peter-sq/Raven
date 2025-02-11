@@ -2,7 +2,7 @@ import axios from 'axios';
 import db from '../../../db/knex.js';
 
 const transferToBank = async (req, res) => {
-  const { bank_code, account_number, account_name, amount, narration, reference, currency, bank } = req.body;
+  const {user_id, bank_code, account_number, account_name, amount, narration, reference, currency, bank } = req.body;
 
   // Validate request body
   if (!bank_code || !account_number || !amount || amount <= 0 || !bank || !currency || !bank_code ) {
@@ -58,6 +58,11 @@ const transferToBank = async (req, res) => {
       user_id,
       type: 'debit',
       amount,
+      currency,
+      account_number,
+      account_name,
+      bank,
+      bank_code,
       narration: narration || 'Transfer to other bank',
       status: 'success',
       reference: transferData.reference, 

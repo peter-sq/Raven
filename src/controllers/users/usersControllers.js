@@ -23,14 +23,14 @@ const Register = async (req, res) => {
   
     try {
       // Check if email or phone already exists
-    //   const userExist = await db('users')
-    //     .where('email', email)
-    //     .orWhere('phone', phone)
-    //     .first();
+      const userExist = await db('users')
+        .where('email', email)
+        .orWhere('phone', phone)
+        .first();
   
-    //   if (userExist) {
-    //     return res.status(409).json({ message: 'User with that email or phone already exists' });
-    //   }
+      if (userExist) {
+        return res.status(409).json({ message: 'User with that email or phone already exists' });
+      }
   
       // Hash password
       const saltRounds = 10;
@@ -76,40 +76,38 @@ const Register = async (req, res) => {
         })
     }
     try {
-
-        //check if user exist
-        const user = await db('users')
-      .where('email', email)
-      .orWhere('password', password)
-      .first();
-
-        if(!user){
-            return res.status(404).json({message: 'User Not Found'})
-        }
-
-        //check password match
-        const passwordMatch = await bcrypt.compare(password, user.password);
-
-        if(!passwordMatch){
-            return res.status(401).json({message: 'Invalid credentials'})
-        }
-
-        //Generate Jwt Token
-        const token = jwt.sign({userId: user.id }, process.env.JWT_SECRET, {expiresIn: '1h'});
-
-        //Return user details and token 
-        const {password: userPassword, ...userDetails} = user;
-        return res.status(200).json({
-            message: 'Login Successful',
-            token,
-            user: userDetails,
-           
-        }) 
-    } catch (error) {
-        console.log(error);
-        return res.status(500).json({message: 'Error Logging In'})
-        
-    }
+      // Check if user exists 
+      const user = await db('users')
+          .where('email', email)
+          .first();
+  
+      if (!user) {
+          return res.status(404).json({ message: 'User Not Found' });
+      }
+  
+      // Check password match using bcrypt
+      const passwordMatch = await bcrypt.compare(password, user.password);
+  
+      if (!passwordMatch) {
+          return res.status(401).json({ message: 'Invalid credentials' });
+      }
+  
+      // Generate JWT Token
+      const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+  
+      // Return user details 
+      const { password: _, ...userDetails } = user;
+      return res.status(200).json({
+          message: 'Login Successful',
+          token,
+          user: userDetails,
+      });
+  
+  } catch (error) {
+      console.error(error);
+      return res.status(500).json({ message: 'Error Logging In' });
+  }
+  
   }
 
   
